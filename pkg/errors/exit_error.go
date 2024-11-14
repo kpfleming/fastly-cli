@@ -34,3 +34,24 @@ func (ee SkipExitError) Print(w io.Writer) {
 		text.Error(w, "%s.", ee.Err.Error())
 	}
 }
+
+// PassthroughExitError is an error that carries an 'exit code' from a
+// subprocess, which should be returned from this program. An example
+// is `fastly run`.
+type PassthroughExitError struct {
+	ExitCode int
+	Err      error
+}
+
+// Unwrap returns the inner error.
+func (pte PassthroughExitError) Unwrap() error {
+	return pte.Err
+}
+
+// Error prints the inner error string.
+func (pte PassthroughExitError) Error() string {
+	if pte.Err == nil {
+		return ""
+	}
+	return pte.Err.Error()
+}

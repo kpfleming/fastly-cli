@@ -60,6 +60,7 @@ import (
 	"github.com/fastly/cli/pkg/commands/purge"
 	"github.com/fastly/cli/pkg/commands/ratelimit"
 	"github.com/fastly/cli/pkg/commands/resourcelink"
+	"github.com/fastly/cli/pkg/commands/run"
 	"github.com/fastly/cli/pkg/commands/secretstore"
 	"github.com/fastly/cli/pkg/commands/secretstoreentry"
 	"github.com/fastly/cli/pkg/commands/service"
@@ -406,6 +407,7 @@ func Define( // nolint:revive // function-length
 	resourcelinkDescribe := resourcelink.NewDescribeCommand(resourcelinkCmdRoot.CmdClause, data)
 	resourcelinkList := resourcelink.NewListCommand(resourcelinkCmdRoot.CmdClause, data)
 	resourcelinkUpdate := resourcelink.NewUpdateCommand(resourcelinkCmdRoot.CmdClause, data)
+	runCmdRoot := run.NewRootCommand(app, data)
 	secretstoreCmdRoot := secretstore.NewRootCommand(app, data)
 	secretstoreCreate := secretstore.NewCreateCommand(secretstoreCmdRoot.CmdClause, data)
 	secretstoreDescribe := secretstore.NewDescribeCommand(secretstoreCmdRoot.CmdClause, data)
@@ -810,6 +812,7 @@ func Define( // nolint:revive // function-length
 		resourcelinkDescribe,
 		resourcelinkList,
 		resourcelinkUpdate,
+		runCmdRoot,
 		secretstoreCreate,
 		secretstoreDescribe,
 		secretstoreDelete,

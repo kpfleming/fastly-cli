@@ -10,6 +10,9 @@ import (
 
 func main() {
 	if err := app.Run(os.Args, os.Stdin); err != nil {
+		if passthrough, ok := err.(fsterr.PassthroughExitError); ok {
+			os.Exit(passthrough.ExitCode)
+		}
 		if skipExit := fsterr.Process(err, os.Args, os.Stdout); skipExit {
 			return
 		}

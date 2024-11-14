@@ -28,13 +28,13 @@ func NewTokenCommand(parent argparser.Registerer, g *global.Data) *TokenCommand 
 	c.Globals = g
 	c.CmdClause = parent.Command("token", "Print API token (defaults to the 'active' profile)")
 	c.CmdClause.Arg("profile", "Print API token for the named profile").Short('p').StringVar(&c.profile)
-	c.CmdClause.Flag("ttl", "Amount of time for which the token must be valid (in seconds 's', minutes 'm', or hours 'h')").Default(defaultTokenTTL.String()).DurationVar(&c.tokenTTL)
+	c.CmdClause.Flag("ttl", "Amount of time for which the token must be valid (in seconds 's', minutes 'm', or hours 'h')").Default(DefaultTokenTTL.String()).DurationVar(&c.tokenTTL)
 	return &c
 }
 
 // By default tokens must be valid for at least 5 minutes to be
 // considered valid.
-const defaultTokenTTL time.Duration = 5 * time.Minute
+const DefaultTokenTTL time.Duration = 5 * time.Minute
 
 // Exec implements the command interface.
 func (c *TokenCommand) Exec(_ io.Reader, out io.Writer) (err error) {
