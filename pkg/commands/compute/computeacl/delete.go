@@ -15,13 +15,28 @@ import (
 	"github.com/fastly/cli/pkg/text"
 )
 
+// APIDeleteFunc defines the type of 'mock' function which can be
+// provided by tests to replace the function from go-fastly. The
+// signature must exactly match the corresponding function in
+// go-fastly.
+type APIDeleteFunc func(context.Context, *fastly.Client, *computeacls.DeleteInput) error
+
 // DeleteCommand calls the Fastly API to delete a compute ACL.
 type DeleteCommand struct {
 	argparser.Base
 	argparser.JSONOutput
 
+	apiHook APIDeleteFunc
+
 	// Required.
 	id string
+}
+
+// SetHook allows a test to supply a 'mock' function to replace the
+// function from go-fastly, and satisfies the
+// argparser.HookableCommand interface.
+func (c *DeleteCommand) SetHook(f APIDeleteFunc) {
+	c.apiHook = f
 }
 
 // NewDeleteCommand returns a usable command registered under the parent.
@@ -30,6 +45,7 @@ func NewDeleteCommand(parent argparser.Registerer, g *global.Data) *DeleteComman
 		Base: argparser.Base{
 			Globals: g,
 		},
+		apiHook: computeacls.Delete,
 	}
 
 	c.CmdClause = parent.Command("delete", "Delete a compute ACL")
@@ -54,7 +70,7 @@ func (c *DeleteCommand) Exec(_ io.Reader, out io.Writer) error {
 		return errors.New("failed to convert interface to a fastly client")
 	}
 
-	err := computeacls.Delete(context.TODO(), fc, &computeacls.DeleteInput{
+	err := c.apiHook(context.TODO(), fc, &computeacls.DeleteInput{
 		ComputeACLID: &c.id,
 	})
 	if err != nil {
