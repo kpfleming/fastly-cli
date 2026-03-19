@@ -209,7 +209,7 @@ func RunCLIScenario(t *testing.T, command []string, scenario CLIScenario) {
 				app.Init = func(_ []string, _ io.Reader) (*global.Data, error) {
 					return opts, nil
 				}
-				err = app.Run(fullargs, nil)
+				err = app.Run(fullargs, nil, nil)
 				done <- true
 			}()
 
@@ -237,7 +237,7 @@ func RunCLIScenario(t *testing.T, command []string, scenario CLIScenario) {
 			app.Init = func(_ []string, _ io.Reader) (*global.Data, error) {
 				return opts, nil
 			}
-			err = app.Run(fullargs, nil)
+			err = app.Run(fullargs, nil, nil)
 		}
 
 		AssertErrorContains(t, err, scenario.WantError)
