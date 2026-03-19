@@ -26,6 +26,18 @@ type Command interface {
 	Exec(in io.Reader, out io.Writer) error
 }
 
+// HookableCommand is an interface which indicates that a specific
+// Command uses a standard API function from go-fastly (not a method
+// on the fastly.Client struct), and that the Command supports
+// injection of a mock implementation of the function.
+//
+// The 'F' type parameter must be the function signature of the
+// go-fastly function which is used by the Command (and which will be
+// mocked during testing).
+type HookableCommand[F any] interface {
+	SetHook(F)
+}
+
 // Select chooses the command matching name, if it exists.
 func Select(name string, commands []Command) (Command, bool) {
 	for _, command := range commands {

@@ -26,7 +26,7 @@ func TestComputeACLCreate(t *testing.T) {
 		ComputeACLID: aclID,
 	}
 
-	scenarios := []testutil.CLIScenario{
+	scenarios := []testutil.CLIScenario[testutil.NoAPIFunc]{
 		{
 			Name:      "validate missing --name flag",
 			Args:      "",
@@ -81,7 +81,7 @@ func TestComputeACLCreate(t *testing.T) {
 func TestComputeACLDelete(t *testing.T) {
 	const aclID = "foo"
 
-	scenarios := []testutil.CLIScenario{
+	scenarios := []testutil.CLIScenario[testutil.NoAPIFunc]{
 		{
 			Name:      "validate missing --acl-id flag",
 			Args:      "",
@@ -148,7 +148,7 @@ func TestComputeACLDescribe(t *testing.T) {
 		ComputeACLID: aclID,
 	}
 
-	scenarios := []testutil.CLIScenario{
+	scenarios := []testutil.CLIScenario[testutil.NoAPIFunc]{
 		{
 			Name:      "validate missing --acl-id flag",
 			Args:      "",
@@ -223,7 +223,7 @@ func TestComputeACLList(t *testing.T) {
 		},
 	}
 
-	scenarios := []testutil.CLIScenario{
+	scenarios := []testutil.CLIScenario[testutil.NoAPIFunc]{
 		{
 			Name: "validate internal server error",
 			Args: "",
@@ -300,7 +300,7 @@ func TestComputeACLLookup(t *testing.T) {
 		Action: "ALLOW",
 	}
 
-	scenarios := []testutil.CLIScenario{
+	scenarios := []testutil.CLIScenario[testutil.NoAPIFunc]{
 		{
 			Name:      "validate missing --ip flag",
 			Args:      fmt.Sprintf("--acl-id %s", aclID),
@@ -392,7 +392,7 @@ func TestComputeACLLookup(t *testing.T) {
 func TestComputeACLUpdate(t *testing.T) {
 	const aclID = "foo"
 
-	scenarios := []testutil.CLIScenario{
+	scenarios := []testutil.CLIScenario[testutil.NoAPIFunc]{
 		{
 			Name:      "validate missing --acl-id flag",
 			Args:      "--file testdata/batch.json",
@@ -521,7 +521,7 @@ func TestComputeACLListEntries(t *testing.T) {
 		},
 	}
 
-	scenarios := []testutil.CLIScenario{
+	scenarios := []testutil.CLIScenario[testutil.NoAPIFunc]{
 		{
 			Name:      "validate missing --acl-id flag",
 			Args:      "",
