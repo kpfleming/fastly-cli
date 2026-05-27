@@ -7,8 +7,12 @@ on:
       [closed]
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 jobs:
   build:
+    name: Build CLI (${{ matrix.platform }})
     if: ${{ github.event.pull_request.merged }}
     strategy:
       matrix:

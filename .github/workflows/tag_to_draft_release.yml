@@ -6,8 +6,12 @@ on:
       - 'v*'
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   goreleaser:
+    name: Run goreleaser
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout code"

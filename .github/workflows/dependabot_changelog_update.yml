@@ -8,11 +8,17 @@ on:
       - reopened
 permissions:
   contents: read
-  pull-requests: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 jobs:
   dependabot-changelog-update:
+    name: Append changelog entry
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # add the Skip-Changelog label when the PR doesn't need an entry
     steps:
       - name: Check labels
         id: check-labels

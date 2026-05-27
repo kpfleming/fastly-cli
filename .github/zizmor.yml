@@ -14,4 +14,17 @@ rules:
     ignore:
       # setup-node@v6 only enables caching when the `cache:` input is set.
       # This workflow does not set it, so no cache is written.
-      - publish_release.yml:22
+      - publish_release.yml
+  superfluous-actions:
+    ignore:
+      # dtolnay/rust-toolchain installs the requested channel (`stable`,
+      # `nightly`, ...) and writes a rust-toolchain.toml override; replacing
+      # it with a raw `rustup` invocation would lose that behaviour.
+      - merge_to_main.yml
+      - pr_test.yml
+      - tag_to_draft_release.yml
+      # stefanzweifel/git-auto-commit-action signs commits, sets the
+      # author/committer to github-actions, and pushes only when the tree
+      # actually changed. Inlining `git add && git commit && git push` would
+      # lose those guarantees.
+      - dependabot_changelog_update.yml

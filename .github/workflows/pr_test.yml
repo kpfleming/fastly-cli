@@ -23,6 +23,7 @@ env:
   WASI_SDK_FULL_VERSION: "25.0"
 jobs:
   changelog:
+    name: Enforce changelog entry
     if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
@@ -32,6 +33,7 @@ jobs:
           persist-credentials: false
       - uses: dangoslen/changelog-enforcer@204e7d3ef26579f4cd0fd759c57032656fdf23c7 # v3.7.0
   config:
+    name: Build static app config
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout code"
@@ -48,6 +50,7 @@ jobs:
           name: config-artifact-${{ github.sha }}
           path: pkg/config/config.toml
   lint:
+    name: Lint (pinned golangci version)
     needs: [config]
     runs-on: ubuntu-latest
     steps:
@@ -76,6 +79,7 @@ jobs:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           only-new-issues: true
   test:
+    name: Test (${{ matrix.platform }})
     needs: [config]
     strategy:
       matrix:
@@ -111,9 +115,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: "Install WASI SDK"
         run: |
-          wget -q https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${{ env.WASI_SDK_VERSION }}/wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-x86_64-linux.tar.gz
-          tar xzf wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-x86_64-linux.tar.gz
-          echo "$(pwd)/wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-x86_64-linux/bin" >> $GITHUB_PATH
+          wget -q "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION}/wasi-sdk-${WASI_SDK_FULL_VERSION}-x86_64-linux.tar.gz"
+          tar xzf "wasi-sdk-${WASI_SDK_FULL_VERSION}-x86_64-linux.tar.gz"
+          echo "$(pwd)/wasi-sdk-${WASI_SDK_FULL_VERSION}-x86_64-linux/bin" >> "$GITHUB_PATH"
         shell: bash
       - name: "Config Artifact"
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -141,6 +145,7 @@ jobs:
           TEST_COMPUTE_BUILD: true
           TEST_COMPUTE_DEPLOY: true
   test-release:
+    name: Test release (${{ matrix.platform }})
     if: contains(github.head_ref, 'release')
     needs: [config]
     strategy:
@@ -178,23 +183,23 @@ jobs:
       - name: "Install WASI SDK (Ubuntu)"
         if: matrix.platform == 'ubuntu-latest'
         run: |
-          wget -q https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${{ env.WASI_SDK_VERSION }}/wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-x86_64-linux.tar.gz
-          tar xzf wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-x86_64-linux.tar.gz
-          echo "$(pwd)/wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-x86_64-linux/bin" >> $GITHUB_PATH
+          wget -q "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION}/wasi-sdk-${WASI_SDK_FULL_VERSION}-x86_64-linux.tar.gz"
+          tar xzf "wasi-sdk-${WASI_SDK_FULL_VERSION}-x86_64-linux.tar.gz"
+          echo "$(pwd)/wasi-sdk-${WASI_SDK_FULL_VERSION}-x86_64-linux/bin" >> "$GITHUB_PATH"
         shell: bash
       - name: "Install WASI SDK (macOS)"
         if: matrix.platform == 'macos-latest'
         run: |
-          wget -q https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${{ env.WASI_SDK_VERSION }}/wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-arm64-macos.tar.gz
-          tar xzf wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-arm64-macos.tar.gz
-          echo "$(pwd)/wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-arm64-macos/bin" >> $GITHUB_PATH
+          wget -q "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VERSION}/wasi-sdk-${WASI_SDK_FULL_VERSION}-arm64-macos.tar.gz"
+          tar xzf "wasi-sdk-${WASI_SDK_FULL_VERSION}-arm64-macos.tar.gz"
+          echo "$(pwd)/wasi-sdk-${WASI_SDK_FULL_VERSION}-arm64-macos/bin" >> "$GITHUB_PATH"
         shell: bash
       - name: "Install WASI SDK (Windows)"
         if: matrix.platform == 'windows-latest'
         run: |
-          Invoke-WebRequest -Uri "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${{ env.WASI_SDK_VERSION }}/wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-x86_64-windows.tar.gz" -OutFile "wasi-sdk.tar.gz"
+          Invoke-WebRequest -Uri "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${env:WASI_SDK_VERSION}/wasi-sdk-${env:WASI_SDK_FULL_VERSION}-x86_64-windows.tar.gz" -OutFile "wasi-sdk.tar.gz"
           tar -xzf wasi-sdk.tar.gz
-          echo "$PWD/wasi-sdk-${{ env.WASI_SDK_FULL_VERSION }}-x86_64-windows/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "$PWD/wasi-sdk-${env:WASI_SDK_FULL_VERSION}-x86_64-windows/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         shell: pwsh
       - name: "Config Artifact"
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -222,6 +227,7 @@ jobs:
           TEST_COMPUTE_BUILD: true
           TEST_COMPUTE_DEPLOY: true
   docker-builds:
+    name: Build docker images
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout code"
